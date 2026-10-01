@@ -33,6 +33,32 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [isMobileMenuOpen])
 
+  const navLinks = [
+    { label: 'Courses', href: '/courses' },
+    { label: 'Blogs', href: '/blog' },
+    { label: 'Testimonials', href: '#trusted-by' },
+    { label: 'Contact', href: '#contact' },
+  ]
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault()
+    setIsMobileMenuOpen(false)
+
+    if (href.startsWith('/')) {
+      navigate(href)
+      return
+    }
+
+    if (location.pathname === '/') {
+      const sectionId = href.replace('#', '')
+      const element = document.getElementById(sectionId)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    } else {
+      navigate('/' + href)
+    }
+  }
 
   return (
     <header
@@ -69,6 +95,22 @@ export default function Header() {
           <h1 className="sr-only">Ediskool</h1>
         </a>
 
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="font-ui font-medium text-sm cursor-pointer transition-colors duration-150 flex items-center gap-1.5"
+              style={{ color: '#F8F5EF' }}
+              onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#007C89' }}
+              onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#F8F5EF' }}
+            >
+              {link.label}
+            </a>
+          ))}
+        </nav>
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
@@ -105,7 +147,20 @@ export default function Header() {
           style={{ backgroundColor: 'rgba(11, 15, 20, 0.97)', borderColor: '#0F1720' }}
         >
           <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-3">
-            <div className="flex flex-col gap-2">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={(e) => handleNavClick(e, link.href)}
+                className="font-ui font-medium text-sm py-2 cursor-pointer transition-colors duration-150 flex items-center justify-between w-full"
+                style={{ color: '#F8F5EF', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+                onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#007C89' }}
+                onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#F8F5EF' }}
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="flex flex-col gap-2 pt-3">
               <button
                 onClick={() => { navigate('/courses'); setIsMobileMenuOpen(false); }}
                 className="font-ui font-bold text-sm py-2.5 px-6 rounded-lg transition cursor-pointer hover:opacity-90 w-full"
